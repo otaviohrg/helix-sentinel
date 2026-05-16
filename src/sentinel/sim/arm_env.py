@@ -28,6 +28,13 @@ class ArmEnv:
         self.model = mujoco.MjModel.from_xml_path(str(MODEL_PATH))
         self.data = mujoco.MjData(self.model)
         self.t = 0.0
+
+        inertias = np.array([
+            self.model.body_inertia[i + 1, 0]
+            for i in range(self.model.nu)
+        ])
+        inertias = np.clip(inertias, 1e-6, None)
+        self._ctrl_scale = inertias / inertias.max()
     
     def _observe(self) -> dict:
         return {
@@ -38,12 +45,7 @@ class ArmEnv:
     def _apply_control(self):
         for i in range(self.model.nu):
             phase = i * np.pi / 3.0
-            self.data.ctrl[i] = np.sin(self.t + phase) * 0.5
-        #for i in range(self.model.nu):
-        # Step command that changes every 50 ticks
-        #    step = int(self.t * PUBLISH_HZ) // 50
-        #    direction = 1 if step % 2 == 0 else -1
-        #    self.data.ctrl[i] = direction * 0.5
+            self.data.ctrl[i] = np.sin(self.t + phase) * 0.5 * self._ctrl_scale[i]
 
     def reset(self) -> np.ndarray:
         mujoco.mj_resetData(self.model, self.data)

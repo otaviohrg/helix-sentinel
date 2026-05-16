@@ -8,7 +8,7 @@ from sentinel.sim.arm_env import EPISODE_LENGTH
 
 # ─── parameters ───────────────────────────────────────────────────────────────
 
-AFFECTED_JOINT = 1
+AFFECTED_JOINT = 5
 ONSET_TIMESTEP = 20
 DRIFT_RATE     = 0.01
 NOISE_SCALE    = 0.1

@@ -5,8 +5,7 @@ WORKDIR /workspace
 COPY pyproject.toml .
 COPY src/ src/
 
-RUN --mount=type=ssh \
-    mkdir -p /root/.ssh && \
-    ssh-keyscan github.com >> /root/.ssh/known_hosts && \
+RUN uv pip install \
+    "git+https://github.com/otaviohrg/helix-core.git#subdirectory=shared/sdk" && \
     uv pip install -e ".[dev]"
 

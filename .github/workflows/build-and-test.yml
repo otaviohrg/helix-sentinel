@@ -1,0 +1,51 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout helix-core for SDK
+        uses: actions/checkout@v4
+        with:
+          repository: otaviohrg/helix-core
+          path: helix-core
+
+      - name: Build helix-sentinel image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/${{ github.repository_owner }}/helix-sentinel:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    container:
+      image: ghcr.io/otaviohrg/helix-sentinel:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint
+        run: ruff check src/ tests/
+
+      - name: Test
+        run: pytest tests/ -v
