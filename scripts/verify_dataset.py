@@ -8,7 +8,7 @@ with h5py.File("data/episodes.h5", "r") as f:
 
     print("\nSplits:")
     for split in ["train", "val", "test"]:
-        obs    = f[split]["observations"]
+        obs = f[split]["observations"]
         labels = f[split]["fault_labels"]
         print(f"  {split}: obs={obs.shape}, labels={labels.shape}")
         print(f"    obs range: [{obs[:].min():.3f}, {obs[:].max():.3f}]")
@@ -17,10 +17,10 @@ with h5py.File("data/episodes.h5", "r") as f:
     # Spot check: plot one faulty and one normal episode
     import matplotlib.pyplot as plt
 
-    obs    = f["train"]["observations"][:]
+    obs = f["train"]["observations"][:]
     labels = f["train"]["fault_labels"][:]
 
-    fault_idx  = np.where(labels > 0)[0][0]
+    fault_idx = np.where(labels > 0)[0][0]
     normal_idx = np.where(labels == 0)[0][0]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))

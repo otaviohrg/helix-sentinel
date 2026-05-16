@@ -29,16 +29,15 @@ class ArmEnv:
         self.data = mujoco.MjData(self.model)
         self.t = 0.0
 
-        inertias = np.array([
-            self.model.body_inertia[i + 1, 0]
-            for i in range(self.model.nu)
-        ])
+        inertias = np.array(
+            [self.model.body_inertia[i + 1, 0] for i in range(self.model.nu)]
+        )
         inertias = np.clip(inertias, 1e-6, None)
         self._ctrl_scale = inertias / inertias.max()
-    
+
     def _observe(self) -> dict:
         return {
-            "positions":  self.data.qpos[:N_JOINTS].copy(),
+            "positions": self.data.qpos[:N_JOINTS].copy(),
             "velocities": self.data.qvel[:N_JOINTS].copy(),
         }
 

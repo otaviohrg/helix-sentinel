@@ -9,7 +9,11 @@ dependencies = [
     "h5py>=3.10.0",
     "tqdm>=4.66.0",
     "pyyaml>=6.0.0",
-    "helix-sdk @ git+ssh://git@github.com/otaviohrg/helix-core.git#subdirectory=shared/sdk",
+    "mlflow>=2.10.0",
+    "onnx>=1.15.0",
+    "onnxruntime>=1.17.0",
+    "scikit-learn>=1.4.0",
+    "matplotlib>=3.8.0",
 ]
 
 [project.optional-dependencies]

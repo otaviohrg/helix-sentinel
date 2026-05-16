@@ -1,13 +1,18 @@
 import numpy as np
 from sentinel.sim.fault_injector import (
-    FaultConfig, FaultInjector, FaultType, FAULT_LABEL
+    FaultConfig,
+    FaultInjector,
+    FaultType,
+    FAULT_LABEL,
 )
 from sentinel.sim.arm_env import EPISODE_LENGTH, N_JOINTS
 
 
 def collect(fault_type, joint=0, onset=50) -> np.ndarray:
     """Run one episode and return flat observations (EPISODE_LENGTH, OBS_DIM)."""
-    config = FaultConfig(fault_type=fault_type, affected_joint=joint, onset_timestep=onset)
+    config = FaultConfig(
+        fault_type=fault_type, affected_joint=joint, onset_timestep=onset
+    )
     env = FaultInjector(config)
     env.reset()
     episodes = []
@@ -29,8 +34,8 @@ def test_normal_no_fault():
 def test_stiction_freezes_position_and_velocity():
     """After onset, affected joint position freezes and velocity drops to near zero."""
     obs = collect(FaultType.JOINT_STICTION, joint=0, onset=50)
-    post_pos = obs[55:, 0]        # joint 0 position after onset
-    post_vel = obs[55:, N_JOINTS] # joint 0 velocity after onset
+    post_pos = obs[55:, 0]  # joint 0 position after onset
+    post_vel = obs[55:, N_JOINTS]  # joint 0 velocity after onset
     # Position should be nearly constant
     assert np.std(post_pos) < 0.01
     # Velocity should be near zero
@@ -48,9 +53,9 @@ def test_encoder_drift_monotonic():
 def test_velocity_noise_increases_variance():
     """After onset, affected joint velocity variance should increase."""
     normal = collect(FaultType.NONE, joint=0)
-    noisy  = collect(FaultType.VELOCITY_NOISE, joint=0, onset=20)
+    noisy = collect(FaultType.VELOCITY_NOISE, joint=0, onset=20)
     normal_std = np.std(normal[25:, N_JOINTS])
-    noisy_std  = np.std(noisy[25:, N_JOINTS])
+    noisy_std = np.std(noisy[25:, N_JOINTS])
     assert noisy_std > normal_std * 2
 
 
