@@ -4,6 +4,7 @@ WORKDIR /workspace
 
 COPY pyproject.toml .
 COPY src/ src/
+COPY models/ models/
 
 RUN uv pip install \
     "git+https://github.com/otaviohrg/helix-core.git#subdirectory=shared/sdk" && \
