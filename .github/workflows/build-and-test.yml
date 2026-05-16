@@ -1,4 +1,4 @@
-name: CI
+name: Build and Test
 on: [push, pull_request]
 
 jobs:
@@ -21,6 +21,9 @@ jobs:
         with:
           repository: otaviohrg/helix-core
           path: helix-core
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build helix-sentinel image
         uses: docker/build-push-action@v5
